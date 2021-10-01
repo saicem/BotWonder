@@ -5,7 +5,7 @@ VisualStudioVersion = 17.0.31612.314
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BotWonder", "BotWonder\BotWonder.csproj", "{ECDAFC7A-D34D-497D-89D4-1FADCA68EC70}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "YukinoshitaBot", "..\saicem\YukinoshitaBot.OPQ\src\YukinoshitaBot\YukinoshitaBot.csproj", "{4CA33D7D-4BB1-4255-BFD6-820881F00EF2}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "YukinoshitaBot", "YukinoshitaBot\YukinoshitaBot.csproj", "{822D242B-1ECB-4D6A-A370-5380EA6CB4D2}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -17,10 +17,10 @@ Global
 		{ECDAFC7A-D34D-497D-89D4-1FADCA68EC70}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{ECDAFC7A-D34D-497D-89D4-1FADCA68EC70}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{ECDAFC7A-D34D-497D-89D4-1FADCA68EC70}.Release|Any CPU.Build.0 = Release|Any CPU
-		{4CA33D7D-4BB1-4255-BFD6-820881F00EF2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{4CA33D7D-4BB1-4255-BFD6-820881F00EF2}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{4CA33D7D-4BB1-4255-BFD6-820881F00EF2}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{4CA33D7D-4BB1-4255-BFD6-820881F00EF2}.Release|Any CPU.Build.0 = Release|Any CPU
+		{822D242B-1ECB-4D6A-A370-5380EA6CB4D2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{822D242B-1ECB-4D6A-A370-5380EA6CB4D2}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{822D242B-1ECB-4D6A-A370-5380EA6CB4D2}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{822D242B-1ECB-4D6A-A370-5380EA6CB4D2}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

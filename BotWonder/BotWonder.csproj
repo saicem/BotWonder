@@ -23,7 +23,7 @@
 	</ItemGroup>
 
 	<ItemGroup>
-	  <ProjectReference Include="..\..\saicem\YukinoshitaBot.OPQ\src\YukinoshitaBot\YukinoshitaBot.csproj" />
+	  <ProjectReference Include="..\YukinoshitaBot\YukinoshitaBot.csproj" />
 	</ItemGroup>
 
 	<ItemGroup>
