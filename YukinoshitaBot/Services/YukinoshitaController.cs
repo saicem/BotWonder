@@ -51,7 +51,6 @@ namespace YukinoshitaBot.Services
                 {
                     using (var scope = this.serviceProvider.CreateScope())
                     {
-                        // todo 隐患 可能设置了属性但没继承 IBotController
                         IBotController controllerObj = GetController(controller.ControllerType, scope);
                         await controllerObj.FriendPicMsgHandler(msg);
                     }

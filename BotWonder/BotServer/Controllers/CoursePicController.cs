@@ -59,12 +59,25 @@ namespace BotWonder.BotServer.Controllers
                 message.ReplyTextMsg("请私聊机器人进行绑定");
                 return;
             }
-            var match = Regex.Match(message.Content, "^课表(?:\\s*)(\\d+)$");
-            // todo 更改策略
-            var weekOrder = (DateTime.Today.Subtract(new DateTime(2021, 9, 5)).Days - 1)/ 7 + 1;
+            var match = Regex.Match(message.Content, "^课表\\s*(\\d+)$");
+            int weekOrder;
             if (match.Success)
             {
                 weekOrder = int.Parse(match.Groups[1].Value);
+                if(weekOrder >= 20 || weekOrder <= 0)
+                {
+                    message.ReplyTextMsg("参数应在 1~20");
+                    return;
+                }
+            }
+            else
+            {
+                // 避免 课表在哪里看？ 这样的话触发机器人
+                if (message.Content.Length != 2)
+                {
+                    return;
+                }
+                weekOrder = (DateTime.Today.Subtract(new DateTime(2021, 9, 5)).Days - 1) / 7 + 1;
             }
             var res = await web.QueryCoursePic(user,weekOrder);
             if (res == null)

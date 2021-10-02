@@ -22,7 +22,7 @@ namespace YukinoshitaBot.Services
         /// </summary>
         public ControllerCollection()
         {
-            // todo 通过子类获取
+            // todo 通过子类获取 而不是 属性
             this.ResolvedControllers = new SortedSet<YukinoshitaControllerInfo>();
         }
 
