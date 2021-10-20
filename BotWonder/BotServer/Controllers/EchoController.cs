@@ -16,7 +16,7 @@ namespace BotWonder.BotServer.Controllers
     {
         public Task FriendPicMsgHandler(PictureMessage message)
         {
-            throw new NotImplementedException();
+            return Task.CompletedTask;
         }
 
         public Task FriendTextMsgHandler(TextMessage message)
@@ -27,7 +27,7 @@ namespace BotWonder.BotServer.Controllers
 
         public Task GroupPicMsgHandler(PictureMessage message)
         {
-            throw new NotImplementedException();
+            return Task.CompletedTask;
         }
 
         public Task GroupTextMsgHandler(TextMessage message)

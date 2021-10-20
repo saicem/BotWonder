@@ -60,6 +60,7 @@ namespace YukinoshitaBot
             var client = new SocketIO(wsApi);
             client.On("OnGroupMsgs", resp =>
             {
+                this.logger.LogDebug(resp.ToString());
                 var respData = resp.GetValue<SocketResponse<GroupMessage>>();
 
                 // 过滤自身消息
@@ -95,6 +96,7 @@ namespace YukinoshitaBot
             });
             client.On("OnFriendMsgs", resp =>
             {
+                this.logger.LogDebug(resp.ToString());
                 var respData = resp.GetValue<SocketResponse<FriendMessage>>();
 
                 // 过滤自身消息

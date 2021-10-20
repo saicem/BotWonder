@@ -41,7 +41,13 @@ namespace BotWonder.Services
 
         internal async Task<User> GetUser(long qq)
         {
-            return await _context.FindAsync<User>(qq);
+            var user = await _context.FindAsync<User>(qq);
+            if (user != null)
+            {
+                user.Active();
+                await _context.SaveChangesAsync();
+            }
+            return user;
         }
 
         internal async Task<MsgToken> CheckMsgToken(string token) => await _context.MsgToken.FindAsync(token);
