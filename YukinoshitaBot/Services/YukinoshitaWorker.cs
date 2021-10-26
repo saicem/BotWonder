@@ -28,6 +28,7 @@ namespace YukinoshitaBot
         private readonly IConfiguration configuration;
         private readonly OpqApi opqApi;
         private readonly IMessageHandler msgHandler;
+        private SocketIO client;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="YukinoshitaWorker"/> class.
@@ -57,8 +58,8 @@ namespace YukinoshitaBot
             this.logger.LogInformation("LoginQQ: {loginQQ}", loginQQ);
             this.logger.LogInformation("WsApi: {wsApi}", wsApi);
 
-            var client = new SocketIO(wsApi);
-            client.On("OnGroupMsgs", resp =>
+            this.client = new SocketIO(wsApi);
+            this.client.On("OnGroupMsgs", resp =>
             {
                 this.logger.LogDebug(resp.ToString());
                 var respData = resp.GetValue<SocketResponse<GroupMessage>>();
@@ -94,7 +95,7 @@ namespace YukinoshitaBot
                         break;
                 }
             });
-            client.On("OnFriendMsgs", resp =>
+            this.client.On("OnFriendMsgs", resp =>
             {
                 this.logger.LogDebug(resp.ToString());
                 var respData = resp.GetValue<SocketResponse<FriendMessage>>();
@@ -130,9 +131,21 @@ namespace YukinoshitaBot
                         break;
                 }
             });
+            this.client.OnDisconnected += this.WhenDisconnect;
+            this.client.OnConnected += this.WhenConnect;
 
-            await client.ConnectAsync();
+            await this.client.ConnectAsync();
+        }
+
+        private void WhenConnect(object? sender, EventArgs e)
+        {
             this.logger.LogInformation("YukinoshitaBot is now connected.");
+        }
+
+        private async void WhenDisconnect(object? sender, string e)
+        {
+            this.logger.LogInformation("YukinoshitaBot just disconnect.");
+            await this.client.ConnectAsync();
         }
 
         /// <inheritdoc/>
