@@ -29,6 +29,7 @@ namespace YukinoshitaBot
         private readonly OpqApi opqApi;
         private readonly IMessageHandler msgHandler;
         private SocketIO client;
+        private string wsApi;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="YukinoshitaWorker"/> class.
@@ -51,13 +52,17 @@ namespace YukinoshitaBot
             var botConfig = this.configuration.GetSection("OpqApiSettings");
             var httpApi = botConfig.GetValue<string>("HttpApi");
             var loginQQ = botConfig.GetValue<long>("LoginQQ");
-            var wsApi = botConfig.GetValue<string>("WebSocketApi");
+            this.wsApi = botConfig.GetValue<string>("WebSocketApi");
 
             this.logger.LogInformation("Starting YukinoshitaBot...");
             this.logger.LogInformation("HttpApi: {httpApi}", httpApi);
             this.logger.LogInformation("LoginQQ: {loginQQ}", loginQQ);
-            this.logger.LogInformation("WsApi: {wsApi}", wsApi);
+            this.logger.LogInformation("WsApi: {wsApi}", this.wsApi);
+            await this.NewClientAsync(this.wsApi);
+        }
 
+        private async Task NewClientAsync(string wsApi)
+        {
             this.client = new SocketIO(wsApi);
             this.client.On("OnGroupMsgs", resp =>
             {
@@ -71,7 +76,7 @@ namespace YukinoshitaBot
                 }
 
                 Message? msg = null;
-                try 
+                try
                 {
                     msg = Message.Parse(respData.CurrentPacket?.Data);
                     msg.OpqApi = this.opqApi;
@@ -145,7 +150,7 @@ namespace YukinoshitaBot
         private async void WhenDisconnect(object? sender, string e)
         {
             this.logger.LogInformation("YukinoshitaBot just disconnect.");
-            await this.client.ConnectAsync();
+            await this.NewClientAsync(this.wsApi);
         }
 
         /// <inheritdoc/>
