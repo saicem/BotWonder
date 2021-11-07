@@ -14,22 +14,27 @@ namespace BotWonder.BotServer.Controllers
     [YukinoshitaController(Command = "echo", MatchMethod = CommandMatchMethod.StartWith, Mode = HandleMode.Break, Priority = 0)]
     public class EchoController : IBotController
     {
+
+        /// <inheritdoc/>
         public Task FriendPicMsgHandler(PictureMessage message)
         {
             return Task.CompletedTask;
         }
 
+        /// <inheritdoc/>
         public Task FriendTextMsgHandler(TextMessage message)
         {
             message.ReplyTextMsg(message.Content[5..]);
             return Task.CompletedTask;
         }
 
+        /// <inheritdoc/>
         public Task GroupPicMsgHandler(PictureMessage message)
         {
             return Task.CompletedTask;
         }
 
+        /// <inheritdoc/>
         public Task GroupTextMsgHandler(TextMessage message)
         {
             message.ReplyTextMsg(message.Content[5..]);

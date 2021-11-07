@@ -21,10 +21,14 @@ namespace BotWonder.Services
             _context = context;
         }
 
-        internal async Task NewUser(User newUser)
+        /// <summary>
+        /// 绑定学号和密码 如果不存在此用户则创建新的用户
+        /// </summary>
+        /// <param name="newUser"></param>
+        /// <returns></returns>
+        internal async Task BindStuDb(User newUser)
         {
-            var user = await _context.User.FindAsync(newUser.Qq);
-
+            var user = await FindUser(newUser.Qq);
             if (user == null)
             {
                 newUser.Active();
@@ -32,24 +36,75 @@ namespace BotWonder.Services
             }
             else
             {
-                user.Username = newUser.Username;
-                user.Password = newUser.Password;
+                user.BindStu(newUser.Username, newUser.Password);
                 user.Active();
             }
             await _context.SaveChangesAsync();
         }
 
+        /// <summary>
+        /// 获取用户
+        /// </summary>
+        /// <param name="qq"></param>
+        /// <returns></returns>
         internal async Task<User> GetUser(long qq)
         {
-            var user = await _context.FindAsync<User>(qq);
+            var user = await FindUser(qq);
             if (user != null)
             {
-                user.Active();
-                await _context.SaveChangesAsync();
+                await UserActive(user);
             }
             return user;
         }
 
+        /// <summary>
+        /// 使用此函数需确保用户存在
+        /// </summary>
+        /// <param name="qq"></param>
+        /// <param name="roomName"></param>
+        /// <returns>应返回给用户的消息</returns>
+        internal async Task<string> BindRoomDb(long qq, string roomName)
+        {
+            var user = await FindUser(qq);
+            if (user == null)
+            {
+                return "绑定宿舍前应先绑定学号";
+            }
+            await UserActive(user);
+            var meterId = await GetMeterId(roomName);
+            if (meterId == null)
+            {
+                return $"不存在该宿舍:{roomName}";
+            }
+            user.BindRoom(roomName, meterId);
+            await _context.SaveChangesAsync();
+            return "绑定宿舍成功";
+        }
+
+
+
         internal async Task<MsgToken> CheckMsgToken(string token) => await _context.MsgToken.FindAsync(token);
+
+        private async Task<User> FindUser(long qq)
+        {
+            return await _context.FindAsync<User>(qq);
+        }
+
+        private async Task UserActive(User user)
+        {
+            user.Active();
+            await _context.SaveChangesAsync();
+        }
+
+        /// <summary>
+        /// 获取电表ID
+        /// </summary>
+        /// <param name="roomName"></param>
+        /// <returns></returns>
+        private async Task<string> GetMeterId(string roomName)
+        {
+            var roomInfo = await _context.ElectricityMeter.FindAsync(roomName);
+            return roomInfo == null ? null : roomInfo.MeterId;
+        }
     }
 }

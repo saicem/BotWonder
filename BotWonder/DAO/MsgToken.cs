@@ -3,16 +3,30 @@ using System.ComponentModel.DataAnnotations;
 
 namespace BotWonder.DAO
 {
+    /// <summary>
+    /// 消息
+    /// </summary>
     public class MsgToken
     {
+        /// <summary>
+        /// Token 用于唯一识别
+        /// </summary>
         [Key]
         public string Token { get; set; }
+        
+        /// <summary>
+        /// 消息类型 群消息或是好友消息
+        /// </summary>
         public MsgType MsgType { get; set; }
+
         /// <summary>
         /// 发送对象 QQ号 或 QQ 群号
         /// </summary>
         public long TargetId { get; set; }
 
+        /// <summary>
+        /// 初始化消息
+        /// </summary>
         public MsgToken()
         {
             Token = GetRandStr(5);

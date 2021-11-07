@@ -1,5 +1,4 @@
 ﻿using BotWonder.Services;
-using System;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using YukinoshitaBot.Data.Attributes;
@@ -10,25 +9,21 @@ using YukinoshitaBot.Extensions;
 namespace BotWonder.BotServer.Controllers
 {
     /// <summary>
-    /// 教务处相关的控制器
+    /// 绑定宿舍
     /// </summary>
-    [YukinoshitaController(Command = "课表日程", MatchMethod = CommandMatchMethod.StartWith, Mode = HandleMode.Break, Priority = 2)]
-    public class CourseCalController : IBotController
+    [YukinoshitaController(Command = "绑定宿舍", MatchMethod = CommandMatchMethod.StartWith, Mode = HandleMode.Break, Priority = 1)]
+    public class BindRoomController : IBotController
     {
-        public DbHandler db;
-        public WebQuery web;
+        private DbHandler db;
 
         /// <summary>
         /// 依赖注入
         /// </summary>
         /// <param name="db"></param>
-        /// <param name="web"></param>
-        public CourseCalController(DbHandler db, WebQuery web)
+        public BindRoomController(DbHandler db)
         {
             this.db = db;
-            this.web = web;
         }
-
         /// <inheritdoc/>
         public Task FriendPicMsgHandler(PictureMessage message)
         {
@@ -56,29 +51,23 @@ namespace BotWonder.BotServer.Controllers
         private async Task CommonFunc(TextMessage message)
         {
             var senderQq = message.SenderInfo.FromQQ;
+            // TODO 优化，好像只需要qq号
             var user = await db.GetUser((long)senderQq);
             if (user == null)
             {
-                message.ReplyTextMsg("请私聊机器人进行绑定");
+                message.ReplyTextMsg("请先私聊机器人绑定学号\n格式:\n绑定 学号 密码");
                 return;
             }
-            var res = await web.QueryCourseCal(user);
-            if (res == null)
+            var match = Regex.Match(message.Content, "绑定宿舍\\s*(.{6,10})$");
+            if (!match.Success)
             {
-                message.ReplyTextMsg("服务器错误,等待修复");
+                message.ReplyTextMsg("绑定宿舍格式:\n" +
+                "绑定宿舍 (东1-101|西2-201|狮城公寓-302|慧1-103|越1-435|智4-409|北5-505|学海6-724)");
                 return;
             }
-            if (!res.Ok)
-            {
-                message.ReplyTextMsg("查询失败，检查账号密码正确性");
-                return;
-            }
-            message.ReplyTextMsg(TextFormat(res.Data));
-        }
-
-        private static string TextFormat(object url)
-        {
-            return $"下载后将文件导入日历即可\n链接: {url}";
+            var roomName = match.Groups[1].Value;
+            var retMsg = await db.BindRoomDb((long)senderQq, roomName);
+            message.ReplyTextMsg(retMsg);
         }
     }
 }

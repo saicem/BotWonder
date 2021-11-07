@@ -8,6 +8,9 @@ namespace BotWonder.DAO
     /// </summary>
     public class Course
     {
+        /// <summary>
+        /// 初始化课表
+        /// </summary>
         public Course()
         {
 

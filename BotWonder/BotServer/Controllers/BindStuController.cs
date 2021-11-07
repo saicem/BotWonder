@@ -9,27 +9,37 @@ using YukinoshitaBot.Extensions;
 
 namespace BotWonder.BotServer.Controllers
 {
-    [YukinoshitaController(Command = "绑定", MatchMethod = CommandMatchMethod.StartWith, Mode = HandleMode.Break, Priority = 1)]
-    public class BindController : IBotController
+    /// <summary>
+    /// 绑定学号 以能够进行基本的功能
+    /// </summary>
+    [YukinoshitaController(Command = "绑定", MatchMethod = CommandMatchMethod.StartWith, Mode = HandleMode.Break, Priority = 4)]
+    public class BindStuController : IBotController
     {
         private readonly DbHandler db;
-        public BindController(DbHandler db)
+
+        /// <summary>
+        /// 依赖注入
+        /// </summary>
+        /// <param name="db"></param>
+        public BindStuController(DbHandler db)
         {
             this.db = db;
         }
 
+        /// <inheritdoc/>
         public Task FriendPicMsgHandler(PictureMessage message)
         {
             return Task.CompletedTask;
         }
 
+        /// <inheritdoc/>
         public async Task FriendTextMsgHandler(TextMessage message)
         {
             var match = Regex.Match(message.Content, "绑定\\s+(\\d+?)\\s+(.+)");
             if (match.Success)
             {
                 // TODO 账号有效性验证
-                await db.NewUser(new User
+                await db.BindStuDb(new User
                 {
                     Qq = (long)message.SenderInfo.FromQQ,
                     Username = match.Groups[1].Value,
@@ -43,11 +53,13 @@ namespace BotWonder.BotServer.Controllers
             }
         }
 
+        /// <inheritdoc/>
         public Task GroupPicMsgHandler(PictureMessage message)
         {
             return Task.CompletedTask;
         }
 
+        /// <inheritdoc/>
         public Task GroupTextMsgHandler(TextMessage message)
         {
             message.ReplyTextMsg("请私聊机器人进行绑定");
