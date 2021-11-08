@@ -62,7 +62,7 @@ namespace BotWonder.BotServer.Controllers
             if (!match.Success)
             {
                 message.ReplyTextMsg("绑定宿舍格式:\n" +
-                "绑定宿舍 (东1-101|西2-201|狮城公寓-302|慧1-103|越1-435|智4-409|北5-505|学海6-724)");
+                "绑定宿舍 (东1-101|西2-201|狮城公寓-302|慧1-103|越1-435|智4-409|北5-505|学海6-724|海虹1-304|余14A-307|余7-508|余10-605+)");
                 return;
             }
             var roomName = match.Groups[1].Value;
