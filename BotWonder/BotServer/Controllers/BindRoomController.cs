@@ -1,4 +1,5 @@
-﻿using BotWonder.Services;
+﻿using BotWonder.Data;
+using BotWonder.Services;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using YukinoshitaBot.Data.Attributes;
@@ -55,14 +56,14 @@ namespace BotWonder.BotServer.Controllers
             var user = await db.GetUser((long)senderQq);
             if (user == null)
             {
-                message.ReplyTextMsg("请先私聊机器人绑定学号\n格式:\n绑定 学号 密码");
+                message.ReplyTextMsg($"请先私聊机器人绑定学号\n格式:\n{HelpContent.BindStu}");
                 return;
             }
             var match = Regex.Match(message.Content, "绑定宿舍\\s*(.{6,10})$");
             if (!match.Success)
             {
                 message.ReplyTextMsg("绑定宿舍格式:\n" +
-                "绑定宿舍 (东1-101|西2-201|狮城公寓-302|慧1-103|越1-435|智4-409|北5-505|学海6-724|海虹1-304|余14A-307|余7-508|余10-605+)");
+                $"{HelpContent.BindRoom}");
                 return;
             }
             var roomName = match.Groups[1].Value;

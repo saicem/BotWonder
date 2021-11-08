@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using BotWonder.Data;
+using System.Threading.Tasks;
 using YukinoshitaBot.Data.Attributes;
 using YukinoshitaBot.Data.Controller;
 using YukinoshitaBot.Data.Event;
@@ -48,17 +49,16 @@ namespace BotWonder.BotServer.Controllers
                 "( ) 内的为必要参数\n" +
                 "[ ] 内的为可选参数\n" +
                 "有多个可选项时以 | 分割\n" +
-                "_ 需要在实际指令中以空格代替\n" +
                 "1.绑定学号:\n" +
-                "绑定_(学号)_(密码)\n" +
+                $"{HelpContent.BindStu}\n" +
                 "2.课表查询:\n" +
-                "课表_[周数]\n" +
+                $"{HelpContent.GetCourse}\n" +
                 "3.课表日程，生成一个可导入日历的文件，导入后可在日程中查看课表:\n" +
-                "课表日程\n" +
+                $"{HelpContent.GetCal}\n" +
                 "4.绑定宿舍:\n" +
-                "绑定宿舍_(东1-101|西2-201|狮城公寓-302|慧1-103|越1-435|智4-409|北5-505|学海6-724|海虹1-304|余14A-307|余7-508|余10-605+)\n" +
+                $"{HelpContent.BindRoom}\n" +
                 "5.电费查询:\n" +
-                "电费";
+                $"{HelpContent.GetEleFee}";
             message.ReplyTextMsg(msg);
         }
     }

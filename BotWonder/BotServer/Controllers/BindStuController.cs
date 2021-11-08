@@ -1,4 +1,5 @@
 ﻿using BotWonder.DAO;
+using BotWonder.Data;
 using BotWonder.Services;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
@@ -49,7 +50,7 @@ namespace BotWonder.BotServer.Controllers
             }
             else
             {
-                message.ReplyTextMsg("绑定失败 格式错误\n参考格式如下:\n绑定 学号 密码");
+                message.ReplyTextMsg($"绑定失败 格式错误\n参考格式如下:\n{HelpContent.BindStu}");
             }
         }
 

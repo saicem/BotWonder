@@ -1,4 +1,5 @@
-﻿using BotWonder.Services;
+﻿using BotWonder.Data;
+using BotWonder.Services;
 using System;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
@@ -59,7 +60,7 @@ namespace BotWonder.BotServer.Controllers
             var user = await db.GetUser((long)senderQq);
             if (user == null)
             {
-                message.ReplyTextMsg("请私聊机器人进行绑定");
+                message.ReplyTextMsg($"请私聊机器人进行绑定，格式:\n{HelpContent.BindStu}");
                 return;
             }
             var res = await web.QueryCourseCal(user);

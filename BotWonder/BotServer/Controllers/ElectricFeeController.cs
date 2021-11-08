@@ -91,27 +91,12 @@ namespace BotWonder.BotServer.Controllers
                 message.ReplyTextMsg("服务器错误");
                 return;
             }
-            //var data = res.Data;
-            //var root = JsonDocument.Parse(data.ToString()).RootElement;
-            //// TODO 获取数据
-            //// 剩余电量
-            //var hasRemainPower = root.TryGetProperty("remainPower", out var docRemainPower);
-            //// 剩余电量单位
-            //var hasRemainName = root.TryGetProperty("remainName", out var docRemainName);
-            //// 剩余电费
-            ////var hasRemainFee = root.TryGetProperty("meterOverdue", out var docRemainFee);
-            //if (hasRemainPower && hasRemainName){
-            //    message.ReplyTextMsg($"剩余电量:{docRemainPower.GetString()}{docRemainName.GetString()}");
-            //    return;
-            //}
-            //else
-            //{
-            //    // TODO 别的日志方式
-            //    Console.WriteLine((string)data);
-            //    message.ReplyTextMsg("未能获取电费");
-            //    return;
-            //}
-            message.ReplyTextMsg(res.Data.ToString());
+            if (res.Ok == false)
+            {
+                message.ReplyTextMsg("绑定信息错误，查询失败！");
+                return;
+            }
+            message.ReplyTextMsg(res.Data?.ToString());
         }
     }
 }

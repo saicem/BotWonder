@@ -1,4 +1,5 @@
-﻿using BotWonder.Services;
+﻿using BotWonder.Data;
+using BotWonder.Services;
 using System;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
@@ -56,7 +57,7 @@ namespace BotWonder.BotServer.Controllers
             var user = await db.GetUser((long)senderQq);
             if (user == null)
             {
-                message.ReplyTextMsg("请私聊机器人进行绑定");
+                message.ReplyTextMsg($"请私聊机器人进行绑定\n{HelpContent.BindStu}");
                 return;
             }
             var match = Regex.Match(message.Content, "^课表\\s*(\\d+)$");
