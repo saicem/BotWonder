@@ -76,19 +76,16 @@ namespace BotWonder.Services
             {
                 return $"不存在该宿舍:{roomName}";
             }
-            user.BindRoom(roomName, meterId);
+            user.BindRoom(roomName);
             await _context.SaveChangesAsync();
             return "绑定宿舍成功";
         }
 
+        internal async Task<StuRoom> GetStuRoom(string roomName) => await _context.FindAsync<StuRoom>(roomName);
 
+        internal async Task<MsgToken> CheckMsgToken(string token) => await _context.FindAsync<MsgToken>(token);
 
-        internal async Task<MsgToken> CheckMsgToken(string token) => await _context.MsgToken.FindAsync(token);
-
-        private async Task<User> FindUser(long qq)
-        {
-            return await _context.FindAsync<User>(qq);
-        }
+        private async Task<User> FindUser(long qq) => await _context.FindAsync<User>(qq);
 
         private async Task UserActive(User user)
         {
@@ -103,7 +100,7 @@ namespace BotWonder.Services
         /// <returns></returns>
         private async Task<string> GetMeterId(string roomName)
         {
-            var roomInfo = await _context.ElectricityMeter.FindAsync(roomName);
+            var roomInfo = await _context.StuRoom.FindAsync(roomName);
             return roomInfo == null ? null : roomInfo.MeterId;
         }
     }

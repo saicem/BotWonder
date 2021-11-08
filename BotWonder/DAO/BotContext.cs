@@ -31,14 +31,20 @@ namespace BotWonder.DAO
         /// <summary>
         /// 电表数据库
         /// </summary>
-        public DbSet<ElectricityMeter> ElectricityMeter { get; set;}
+        public DbSet<StuRoom> StuRoom { get; set;}
 
         /// <inheritdoc/>
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            modelBuilder.Entity<User>();
+            modelBuilder.Entity<User>(builder =>
+            {
+                builder.HasOne(u => u.StuRoom);
+            });
             modelBuilder.Entity<MsgToken>();
-            modelBuilder.Entity<ElectricityMeter>().HasKey(e => e.RoomName);
+            modelBuilder.Entity<StuRoom>(builder =>
+            {
+                builder.HasKey(e => e.RoomName);
+            });
         }
     }
 }

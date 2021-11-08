@@ -100,22 +100,43 @@ namespace BotWonder.Services
         /// <param name="username"></param>
         /// <param name="password"></param>
         /// <param name="meterId"></param>
+        /// <param name="region"></param>
         /// <returns></returns>
-        public async Task<ApiRes> QueryEletricFee(string username, string password, string meterId)
+        public async Task<ApiRes> QueryEletricFee(string username, string password, string meterId, string region)
         {
-            var dic = new Dictionary<string, string> {
-                {"username", username },
-                {"password", password},
-                {"meter_id", meterId },
-            };
-            var res = await Client.PostAsync(config.Cwsf.ElectricFee, new StringContent(
-                    JsonSerializer.Serialize(dic),
-                    Encoding.UTF8,
-                    "application/json"));
-            if (res.IsSuccessStatusCode)
+            if (region == "马区")
             {
-                var resStr = await res.Content.ReadAsStringAsync();
-                return JsonSerializer.Deserialize<ApiRes>(resStr);
+                var dic = new Dictionary<string, string> {
+                    {"username", username },
+                    {"password", password},
+                    {"meter_id", meterId },
+                };
+                var res = await Client.PostAsync(config.Cwsf.ElectricMa, new StringContent(
+                        JsonSerializer.Serialize(dic),
+                        Encoding.UTF8,
+                        "application/json"));
+                if (res.IsSuccessStatusCode)
+                {
+                    var resStr = await res.Content.ReadAsStringAsync();
+                    return JsonSerializer.Deserialize<ApiRes>(resStr);
+                }
+            }
+            else if (region == "余区")
+            {
+                var dic = new Dictionary<string, string> {
+                    {"username", username },
+                    {"password", password},
+                    {"roomno", meterId },
+                };
+                var res = await Client.PostAsync(config.Cwsf.ElectricYu, new StringContent(
+                        JsonSerializer.Serialize(dic),
+                        Encoding.UTF8,
+                        "application/json"));
+                if (res.IsSuccessStatusCode)
+                {
+                    var resStr = await res.Content.ReadAsStringAsync();
+                    return JsonSerializer.Deserialize<ApiRes>(resStr);
+                }
             }
             return null;
         }

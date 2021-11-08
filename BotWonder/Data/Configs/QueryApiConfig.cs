@@ -53,9 +53,14 @@
     public class Cwsf
     {
         /// <summary>
-        /// 电费查询
+        /// 马区电费查询
         /// </summary>
-        public string ElectricFee { get; set; }
+        public string ElectricMa { get; set; }
+
+        /// <summary>
+        /// 余区电费查询
+        /// </summary>
+        public string ElectricYu { get; set; }
     }
 }
 

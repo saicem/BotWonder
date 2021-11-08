@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace BotWonder.DAO
 {
@@ -41,9 +42,10 @@ namespace BotWonder.DAO
         public string RoomName { get; set; } = null;
 
         /// <summary>
-        /// 电表ID
+        /// 宿舍信息
         /// </summary>
-        public string MeterId { get; set; } = null;
+        [ForeignKey("RoomName")]
+        public StuRoom StuRoom { get; set; } = null;
 
         /// <summary>
         /// 最后活跃时间
@@ -96,10 +98,9 @@ namespace BotWonder.DAO
         /// </summary>
         /// <param name="roomName">宿舍名称</param>
         /// <param name="meterId">电表ID</param>
-        public void BindRoom(string roomName, string meterId)
+        public void BindRoom(string roomName)
         {
             RoomName = roomName;
-            MeterId = meterId;
         }
 
         /// <summary>

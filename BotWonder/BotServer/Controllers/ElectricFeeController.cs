@@ -18,16 +18,18 @@ namespace BotWonder.BotServer.Controllers
         /// <summary>
         /// 网络请求
         /// </summary>
-        private WebQuery web;
+        private readonly WebQuery web;
+
         /// <summary>
         /// 数据库查询
         /// </summary>
-        private DbHandler db;
+        private readonly DbHandler db;
 
         /// <summary>
         /// 依赖注入
         /// </summary>
         /// <param name="web"></param>
+        /// <param name="db"></param>
         public ElectricFeeController(WebQuery web, DbHandler db)
         {
             this.web = web;
@@ -82,32 +84,34 @@ namespace BotWonder.BotServer.Controllers
                     "绑定宿舍 (东1-101|西2-201|狮城公寓-302|慧1-103|越1-435|智4-409|北5-505|学海6-724)");
                 return;
             }
-            var res = await web.QueryEletricFee(user.Username, user.Password, user.MeterId);
+            var stuRoom = await db.GetStuRoom(user.RoomName);
+            var res = await web.QueryEletricFee(user.Username, user.Password, stuRoom.MeterId, stuRoom.Region);
             if (res == null)
             {
                 message.ReplyTextMsg("服务器错误");
                 return;
             }
-            var data = res.Data;
-            var root = JsonDocument.Parse(data.ToString()).RootElement;
-            // TODO 获取数据
-            // 剩余电量
-            var hasRemainPower = root.TryGetProperty("remainPower", out var docRemainPower);
-            // 剩余电量单位
-            var hasRemainName = root.TryGetProperty("remainName", out var docRemainName);
-            // 剩余电费
-            //var hasRemainFee = root.TryGetProperty("meterOverdue", out var docRemainFee);
-            if (hasRemainPower && hasRemainName){
-                message.ReplyTextMsg($"剩余电量:{docRemainPower.GetString()}{docRemainName.GetString()}");
-                return;
-            }
-            else
-            {
-                // TODO 别的日志方式
-                Console.WriteLine((string)data);
-                message.ReplyTextMsg("未能获取电费");
-                return;
-            }
+            //var data = res.Data;
+            //var root = JsonDocument.Parse(data.ToString()).RootElement;
+            //// TODO 获取数据
+            //// 剩余电量
+            //var hasRemainPower = root.TryGetProperty("remainPower", out var docRemainPower);
+            //// 剩余电量单位
+            //var hasRemainName = root.TryGetProperty("remainName", out var docRemainName);
+            //// 剩余电费
+            ////var hasRemainFee = root.TryGetProperty("meterOverdue", out var docRemainFee);
+            //if (hasRemainPower && hasRemainName){
+            //    message.ReplyTextMsg($"剩余电量:{docRemainPower.GetString()}{docRemainName.GetString()}");
+            //    return;
+            //}
+            //else
+            //{
+            //    // TODO 别的日志方式
+            //    Console.WriteLine((string)data);
+            //    message.ReplyTextMsg("未能获取电费");
+            //    return;
+            //}
+            message.ReplyTextMsg(res.Data.ToString());
         }
     }
 }
