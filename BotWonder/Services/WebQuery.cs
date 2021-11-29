@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 using System.Collections.Generic;
 using System.Text.Json;
 using System.Text;
-using BotWonder.Models.Response;
+using BotWonder.DTO;
 
 namespace BotWonder.Services
 {

@@ -39,44 +39,14 @@
             本方法处理完毕后继续将请求向之后的处理者传递
             </summary>
         </member>
-        <member name="T:YukinoshitaBot.Data.Attributes.SessionType">
+        <member name="T:YukinoshitaBot.Data.Attributes.GroupImageAttribute">
             <summary>
-            会话类型
+            群组图片消息
             </summary>
         </member>
-        <member name="F:YukinoshitaBot.Data.Attributes.SessionType.None">
+        <member name="T:YukinoshitaBot.Data.Attributes.GroupTextAttribute">
             <summary>
-            无会话状态
-            </summary>
-        </member>
-        <member name="F:YukinoshitaBot.Data.Attributes.SessionType.Person">
-            <summary>
-            总是按照按QQ号进行会话
-            </summary>
-        </member>
-        <member name="F:YukinoshitaBot.Data.Attributes.SessionType.Group">
-            <summary>
-            群消息按照群号进行会话
-            </summary>
-        </member>
-        <member name="T:YukinoshitaBot.Data.Attributes.FromType">
-            <summary>
-            接受消息类型
-            </summary>
-        </member>
-        <member name="F:YukinoshitaBot.Data.Attributes.FromType.Preson">
-            <summary>
-            好友消息
-            </summary>
-        </member>
-        <member name="F:YukinoshitaBot.Data.Attributes.FromType.Group">
-            <summary>
-            群组消息
-            </summary>
-        </member>
-        <member name="F:YukinoshitaBot.Data.Attributes.FromType.Temp">
-            <summary>
-            临时会话
+            群组文本消息
             </summary>
         </member>
         <member name="T:YukinoshitaBot.Data.Attributes.YukinoshitaControllerAttribute">
@@ -157,27 +127,6 @@
         </member>
         <member name="M:YukinoshitaBot.Data.Attributes.YukinoshitaControllerInfo.CompareTo(YukinoshitaBot.Data.Attributes.YukinoshitaControllerInfo)">
             <inheritdoc/>
-        </member>
-        <member name="T:YukinoshitaBot.Data.Attributes.YukinoshitaHandlerInfo">
-            <summary>
-            消息处理方法信息
-            </summary>
-        </member>
-        <member name="M:YukinoshitaBot.Data.Attributes.YukinoshitaHandlerInfo.#ctor(System.Reflection.MethodInfo)">
-            <summary>
-            Initializes a new instance of the <see cref="T:YukinoshitaBot.Data.Attributes.YukinoshitaHandlerInfo"/> struct.
-            </summary>
-            <param name="method">方法</param>
-        </member>
-        <member name="P:YukinoshitaBot.Data.Attributes.YukinoshitaHandlerInfo.Method">
-            <summary>
-            方法
-            </summary>
-        </member>
-        <member name="P:YukinoshitaBot.Data.Attributes.YukinoshitaHandlerInfo.MethodAttribute">
-            <summary>
-            方法属性
-            </summary>
         </member>
         <member name="T:YukinoshitaBot.Data.Content.FriendMixtureContent">
             <summary>
