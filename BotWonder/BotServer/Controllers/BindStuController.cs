@@ -14,7 +14,7 @@ namespace BotWonder.BotServer.Controllers
     /// 绑定学号 以能够进行基本的功能
     /// </summary>
     [YukinoshitaController(Command = "绑定", MatchMethod = CommandMatchMethod.StartWith, Mode = HandleMode.Break, Priority = 4)]
-    public class BindStuController : IBotController
+    public class BindStuController : BotControllerBase
     {
         private readonly DbHandler db;
 
@@ -27,13 +27,7 @@ namespace BotWonder.BotServer.Controllers
             this.db = db;
         }
 
-        /// <inheritdoc/>
-        public Task FriendPicMsgHandler(PictureMessage message)
-        {
-            return Task.CompletedTask;
-        }
-
-        /// <inheritdoc/>
+        [FriendText]
         public async Task FriendTextMsgHandler(TextMessage message)
         {
             var match = Regex.Match(message.Content, "绑定\\s+(\\d+?)\\s+(.+)");
@@ -50,17 +44,11 @@ namespace BotWonder.BotServer.Controllers
             }
             else
             {
-                message.ReplyTextMsg($"绑定失败 格式错误\n参考格式如下:\n{HelpContent.BindStu}");
+                message.ReplyTextMsg($"绑定失败 格式错误\n参考格式如下:\n{HelpContent.BindStuCommand}");
             }
         }
 
-        /// <inheritdoc/>
-        public Task GroupPicMsgHandler(PictureMessage message)
-        {
-            return Task.CompletedTask;
-        }
-
-        /// <inheritdoc/>
+        [GroupText]
         public Task GroupTextMsgHandler(TextMessage message)
         {
             message.ReplyTextMsg("请私聊机器人进行绑定");

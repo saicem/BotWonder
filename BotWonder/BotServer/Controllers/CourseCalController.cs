@@ -14,7 +14,7 @@ namespace BotWonder.BotServer.Controllers
     /// 教务处相关的控制器
     /// </summary>
     [YukinoshitaController(Command = "课表日程", MatchMethod = CommandMatchMethod.StartWith, Mode = HandleMode.Break, Priority = 2)]
-    public class CourseCalController : IBotController
+    public class CourseCalController : BotControllerBase
     {
         public DbHandler db;
         public WebQuery web;
@@ -30,37 +30,14 @@ namespace BotWonder.BotServer.Controllers
             this.web = web;
         }
 
-        /// <inheritdoc/>
-        public Task FriendPicMsgHandler(PictureMessage message)
-        {
-            return Task.CompletedTask;
-        }
-
-        /// <inheritdoc/>
-        public async Task FriendTextMsgHandler(TextMessage message)
-        {
-            await CommonFunc(message);
-        }
-
-        /// <inheritdoc/>
-        public Task GroupPicMsgHandler(PictureMessage message)
-        {
-            return Task.CompletedTask;
-        }
-
-        /// <inheritdoc/>
-        public async Task GroupTextMsgHandler(TextMessage message)
-        {
-            await CommonFunc(message);
-        }
-
+        [FriendText, GroupText]
         private async Task CommonFunc(TextMessage message)
         {
             var senderQq = message.SenderInfo.FromQQ;
             var user = await db.GetUser((long)senderQq);
             if (user == null)
             {
-                message.ReplyTextMsg($"请私聊机器人进行绑定，格式:\n{HelpContent.BindStu}");
+                message.ReplyTextMsg($"请私聊机器人进行绑定，格式:\n{HelpContent.BindStuCommand}");
                 return;
             }
             var res = await web.QueryCourseCal(user);

@@ -22,14 +22,19 @@ namespace YukinoshitaBot.Services
         /// </summary>
         public ControllerCollection()
         {
-            // todo 通过子类获取 而不是 属性
             this.ResolvedControllers = new SortedSet<YukinoshitaControllerInfo>();
+            //this.Handlers = new Dictionary<Type, HashSet<YukinoshitaHandlerInfo>>();
         }
 
         /// <summary>
         /// 已解析的控制器
         /// </summary>
         public SortedSet<YukinoshitaControllerInfo> ResolvedControllers { get; init; }
+
+        ///// <summary>
+        ///// 已解析的Handler
+        ///// </summary>
+        //public Dictionary<Type, HashSet<YukinoshitaHandlerInfo>> Handlers { get; }
 
 
         /// <summary>
@@ -39,6 +44,21 @@ namespace YukinoshitaBot.Services
         public void AddController(Type controllerType)
         {
             this.ResolvedControllers.Add(new YukinoshitaControllerInfo(controllerType));
+
+            // 对每一个控制器类型，获取其方法
+            //var allMethods = controllerType.GetMethods();
+            //var handlers = new HashSet<YukinoshitaHandlerInfo>();
+
+            //foreach (var method in allMethods)
+            //{
+            //    // 筛选含有YukinoshitaHandlerAttribute的方法
+            //    if (method.GetCustomAttribute<FriendTextAttribute>() is FriendTextAttribute)
+            //    {
+            //        handlers.Add(new YukinoshitaHandlerInfo(method));
+            //    }
+            //}
+
+            //this.Handlers.Add(controllerType, handlers);
         }
     }
 }

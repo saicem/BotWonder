@@ -1,7 +1,4 @@
-﻿//using BotWonder.DAO;
-//using BotWonder.Models.Request;
-//using BotWonder.Models.Response;
-//using BotWonder.Services;
+﻿//using BotWonder.Services;
 //using Microsoft.AspNetCore.Mvc;
 //using System;
 //using System.Threading.Tasks;
@@ -40,20 +37,25 @@
 //        [HttpPost("send")]
 //        public async Task<ApiRes> MsgSend(MsgIn msg)
 //        {
-//            var msgToken = await db.CheckMsgToken(msg.Token);
-//            if (msgToken == null)
-//            {
-//                return new BadRes("错误的token值");
-//            }
+//            //var msgToken = await db.CheckMsgToken(msg.Token);
+//            //if (msgToken == null)
+//            //{
+//            //    return new BadRes("错误的token值");
+//            //}
 //            var textMsgRequest = new TextMessageRequest(msg.Message);
-//            opqApi.AddRequest(msgToken.MsgType switch
+//            var IsMatch = true;
+//            opqApi.AddRequest(msg.MsgType switch
 //            {
-//                MsgType.FriendMsg => textMsgRequest.SendToFriend(msgToken.TargetId),
-//                MsgType.GroupMsg => textMsgRequest.SendToGroup(msgToken.TargetId),
+//                MsgType.Friend => textMsgRequest.SendToFriend(msg.TargetId),
+//                MsgType.Group => textMsgRequest.SendToGroup(msg.TargetId),
 //                _ => throw new NotImplementedException(),
 //            }
 //            );
-//            return new GoodRes(msg.Message);
+//            if (IsMatch)
+//            {
+//                return new GoodRes("成功发送");
+//            }
+//            return new BadRes("不合法的消息类型");
 //        }
 //    }
 //}

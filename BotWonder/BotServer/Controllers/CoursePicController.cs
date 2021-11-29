@@ -15,49 +15,26 @@ namespace BotWonder.BotServer.Controllers
     /// 生成课表图片
     /// </summary>
     [YukinoshitaController(Command = "课表", MatchMethod = CommandMatchMethod.StartWith, Mode = HandleMode.Break, Priority = 3)]
-    public class CoursePicController : IBotController
+    public class CoursePicController
     {
         public DbHandler db;
         public WebQuery web;
-        
-        
+
+
         public CoursePicController(DbHandler db, WebQuery web)
         {
             this.db = db;
             this.web = web;
         }
 
-        /// <inheritdoc/>
-        public Task FriendPicMsgHandler(PictureMessage message)
-        {
-            return Task.CompletedTask;
-        }
-
-        /// <inheritdoc/>
-        public async Task FriendTextMsgHandler(TextMessage message)
-        {
-            await CommonFunc(message);
-        }
-
-        /// <inheritdoc/>
-        public Task GroupPicMsgHandler(PictureMessage message)
-        {
-            return Task.CompletedTask;
-        }
-
-        /// <inheritdoc/>
-        public async Task GroupTextMsgHandler(TextMessage message)
-        {
-            await CommonFunc(message);
-        }
-
-        private async Task CommonFunc(TextMessage message)
+        [FriendText, GroupText]
+        public async Task CommonFunc(TextMessage message)
         {
             var senderQq = message.SenderInfo.FromQQ;
             var user = await db.GetUser((long)senderQq);
             if (user == null)
             {
-                message.ReplyTextMsg($"请私聊机器人进行绑定\n{HelpContent.BindStu}");
+                message.ReplyTextMsg($"请私聊机器人进行绑定\n{HelpContent.BindStuCommand}");
                 return;
             }
             var match = Regex.Match(message.Content, "^课表\\s*(\\d+)$");
@@ -65,7 +42,7 @@ namespace BotWonder.BotServer.Controllers
             if (match.Success)
             {
                 weekOrder = int.Parse(match.Groups[1].Value);
-                if(weekOrder >= 20 || weekOrder <= 0)
+                if (weekOrder >= 20 || weekOrder <= 0)
                 {
                     message.ReplyTextMsg("参数应在 1~20");
                     return;
@@ -80,7 +57,7 @@ namespace BotWonder.BotServer.Controllers
                 }
                 weekOrder = (DateTime.Today.Subtract(new DateTime(2021, 9, 5)).Days - 1) / 7 + 1;
             }
-            var res = await web.QueryCoursePic(user,weekOrder);
+            var res = await web.QueryCoursePic(user, weekOrder);
             if (res == null)
             {
                 message.ReplyTextMsg("服务器错误,等待修复");

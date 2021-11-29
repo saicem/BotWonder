@@ -13,7 +13,7 @@ namespace BotWonder.BotServer.Controllers
     /// 电费查询
     /// </summary>
     [YukinoshitaController(Command = "电费", MatchMethod = CommandMatchMethod.StartWith, Mode = HandleMode.Break, Priority = 6)]
-    public class ElectricFeeController : IBotController
+    public class ElectricFeeController : BotControllerBase
     {
         /// <summary>
         /// 网络请求
@@ -36,34 +36,11 @@ namespace BotWonder.BotServer.Controllers
             this.db = db;
         }
 
-        /// <inheritdoc/>
-        public Task FriendPicMsgHandler(PictureMessage message)
-        {
-            return Task.CompletedTask;
-        }
-
-        /// <inheritdoc/>
-        public async Task FriendTextMsgHandler(TextMessage message)
-        {
-            await CommonFunc(message);
-        }
-
-        /// <inheritdoc/>
-        public Task GroupPicMsgHandler(PictureMessage message)
-        {
-            return Task.CompletedTask;
-        }
-
-        /// <inheritdoc/>
-        public async Task GroupTextMsgHandler(TextMessage message)
-        {
-            await CommonFunc(message);
-        }
-
         /// <summary>
         /// 共有方法
         /// </summary>
         /// <param name="message"></param>
+        [FriendText, GroupText]
         public async Task CommonFunc(TextMessage message)
         {
             if ((DateTime.Now.Hour == 23 && DateTime.Now.Minute >= 20) || (DateTime.Now.Hour == 0 && DateTime.Now.Minute <= 10))

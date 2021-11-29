@@ -101,7 +101,7 @@ namespace BotWonder.Services
         private async Task<string> GetMeterId(string roomName)
         {
             var roomInfo = await _context.StuRoom.FindAsync(roomName);
-            return roomInfo == null ? null : roomInfo.MeterId;
+            return roomInfo?.MeterId;
         }
     }
 }
