@@ -11,15 +11,21 @@ namespace BotWonder.BotServer.Controllers
     /// <summary>
     /// 复读控制器
     /// </summary>
-    [StrictRoute(Command = "echo", Priority = 0)]
+    [CmdRoute(Command = "echo{content}", Priority = 0)]
     public class EchoController : BotControllerBase
     {
+        /// <summary>
+        /// 文本消息处理
+        /// </summary>
+        /// <param name="content">复读的内容</param>
         [FriendText, GroupText]
-        public Task TextMsgHandler()
+        public void TextMsgHandler(string content)
         {
-            var msg = Message as TextMessage;
-            msg.ReplyText(msg.Content[5..]);
-            return Task.CompletedTask;
+            content = content.Trim();
+            if (content.Length > 0)
+            {
+                ReplyTextMsg(content);
+            }
         }
     }
 }

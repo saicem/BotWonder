@@ -1,5 +1,6 @@
 ﻿using BotWonder.Data;
 using BotWonder.Services;
+using System.ComponentModel.DataAnnotations;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using YukinoshitaBot.Data.Attributes;
@@ -11,7 +12,7 @@ namespace BotWonder.BotServer.Controllers
     /// <summary>
     /// 绑定宿舍
     /// </summary>
-    [StartRoute(Command = "绑定宿舍", Priority = 1)]
+    [CmdRoute(Command = "绑定宿舍_{room}", Priority = 1)]
     public class BindRoomController : BotControllerBase
     {
         private DbHandler db;
@@ -26,13 +27,20 @@ namespace BotWonder.BotServer.Controllers
         }
 
         /// <summary>
+        /// 参数验证失败时的返回值
+        /// </summary>
+        public override void OnValidationError()
+        {
+            ReplyTextMsg($"绑定宿舍格式:\n{HelpContent.BindRoomCommand}");
+        }
+
+        /// <summary>
         /// 文本消息处理
         /// </summary>
         /// <returns></returns>
         [FriendText, GroupText]
-        private async Task TextMsgHandler()
+        private async Task TextMsgHandler([MaxLength(10), MinLength(6)] string room)
         {
-            var textMessage = Message as TextMessage;
             // TODO 优化，好像只需要qq号
             var user = await db.GetUser((long)FromQQ);
             if (user == null)
@@ -40,14 +48,7 @@ namespace BotWonder.BotServer.Controllers
                 ReplyTextMsg($"请先私聊机器人绑定学号\n格式:\n{HelpContent.BindStuCommand}");
                 return;
             }
-            var match = Regex.Match(textMessage.Content, "绑定宿舍\\s*(.{6,10})$");
-            if (!match.Success)
-            {
-                ReplyTextMsg($"绑定宿舍格式:\n{HelpContent.BindRoomCommand}");
-                return;
-            }
-            var roomName = match.Groups[1].Value;
-            var retMsg = await db.BindRoomDb((long)FromQQ, roomName);
+            var retMsg = await db.BindRoomDb((long)FromQQ, room);
             ReplyTextMsg(retMsg);
         }
     }

@@ -13,7 +13,7 @@ namespace BotWonder.BotServer.Controllers
     /// <summary>
     /// 教务处相关的控制器
     /// </summary>
-    [StartRoute(Command = "课表日程", Priority = 2)]
+    [StrictRoute(Command = "课表日程", Priority = 2)]
     public class CourseCalController : BotControllerBase
     {
         public DbHandler db;
