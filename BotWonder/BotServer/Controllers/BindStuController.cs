@@ -13,7 +13,7 @@ namespace BotWonder.BotServer.Controllers
     /// <summary>
     /// 绑定学号 以能够进行基本的功能
     /// </summary>
-    [YukinoshitaController(Command = "绑定", MatchMethod = CommandMatchMethod.StartWith, Mode = HandleMode.Break, Priority = 4)]
+    [CmdRoute(Command = "绑定_{username}_{password}", Priority = 4)]
     public class BindStuController : BotControllerBase
     {
         private readonly DbHandler db;
@@ -28,24 +28,34 @@ namespace BotWonder.BotServer.Controllers
         }
 
         [FriendText]
-        public async Task FriendTextMsgHandler(TextMessage message)
+        public async Task FriendTextMsgHandler(string username, string password)
         {
-            var match = Regex.Match(message.Content, "绑定\\s+(\\d+?)\\s+(.+)");
-            if (match.Success)
+            //var match = Regex.Match(Message.Content, "绑定\\s+(\\d+?)\\s+(.+)");
+
+            //if (match.Success)
+            //{
+            //    // TODO 账号有效性验证
+            //    await db.BindStuDb(new User
+            //    {
+            //        Qq = (long)Message.SenderInfo.FromQQ,
+            //        Username = match.Groups[1].Value,
+            //        Password = match.Groups[2].Value,
+            //    });
+            //    Message.ReplyTextMsg("绑定成功");
+            //}
+            //else
+            //{
+            //    Message.ReplyTextMsg($"绑定失败 格式错误\n参考格式如下:\n{HelpContent.BindStuCommand}");
+            //}
+
+            // TODO 账号有效性验证
+            await db.BindStuDb(new User
             {
-                // TODO 账号有效性验证
-                await db.BindStuDb(new User
-                {
-                    Qq = (long)message.SenderInfo.FromQQ,
-                    Username = match.Groups[1].Value,
-                    Password = match.Groups[2].Value,
-                });
-                message.ReplyTextMsg("绑定成功");
-            }
-            else
-            {
-                message.ReplyTextMsg($"绑定失败 格式错误\n参考格式如下:\n{HelpContent.BindStuCommand}");
-            }
+                Qq = (long)Message.SenderInfo.FromQQ,
+                Username = username,
+                Password = password,
+            });
+            Message.ReplyTextMsg("绑定成功");
         }
 
         [GroupText]

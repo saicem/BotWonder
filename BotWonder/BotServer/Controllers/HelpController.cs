@@ -10,16 +10,16 @@ namespace BotWonder.BotServer.Controllers
     /// <summary>
     /// 帮助信息
     /// </summary>
-    [YukinoshitaController(Command = "帮助", MatchMethod = CommandMatchMethod.Strict, Mode = HandleMode.Break, Priority = 5)]
+    [StartRoute(Command = "帮助", Priority = 5)]
     public class HelpController : BotControllerBase
     {
-        
+
         /// <summary>
         /// 帮助信息一览
         /// </summary>
         /// <param name="message"></param>
         [FriendText, GroupText]
-        public void CommonFunc(TextMessage message)
+        public void CommonFunc()
         {
             var msg = "当前机器人开放以下指令\n" +
                 "( ) 内的为必要参数\n" +
@@ -35,7 +35,7 @@ namespace BotWonder.BotServer.Controllers
                 $"{HelpContent.BindRoomCommand}\n" +
                 "5.电费查询:\n" +
                 $"{HelpContent.GetEleFeeCommand}";
-            message.ReplyTextMsg(msg);
+            Message.ReplyTextMsg(msg);
         }
     }
 }

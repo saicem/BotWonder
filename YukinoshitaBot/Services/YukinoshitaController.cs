@@ -5,155 +5,178 @@
 namespace YukinoshitaBot.Services
 {
     using System;
-    using System.Collections;
     using System.Collections.Generic;
-    using System.Linq;
+    using System.ComponentModel.DataAnnotations;
     using System.Reflection;
-    using System.Text;
-    using System.Text.RegularExpressions;
-    using System.Threading.Tasks;
-    using Microsoft.Extensions.Caching.Memory;
-    using Microsoft.Extensions.DependencyInjection;
-    using Microsoft.Extensions.Logging;
     using YukinoshitaBot.Data.Attributes;
     using YukinoshitaBot.Data.Controller;
     using YukinoshitaBot.Data.Event;
-    using YukinoshitaBot.Data.OpqApi;
-    using YukinoshitaBot.Extensions;
 
     /// <summary>
     /// 实现控制器
     /// </summary>
     internal class YukinoshitaController : IMessageHandler
     {
-        private readonly IServiceProvider serviceProvider;
         private readonly ControllerCollection controllers;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="YukinoshitaController"/> class.
         /// </summary>
-        /// <param name="serviceProvider">服务容器</param>
         /// <param name="controllerCollection">控制器容器</param>
         public YukinoshitaController(
-            IServiceProvider serviceProvider,
             ControllerCollection controllerCollection)
         {
-            this.serviceProvider = serviceProvider;
             this.controllers = controllerCollection;
         }
 
         /// <inheritdoc/>
         public void OnFriendPictureMsgRecieved(PictureMessage msg)
         {
-            foreach (var controller in this.controllers.ResolvedControllers)
-            {
-                if (!CheckMatch(msg.Content, controller.ControllerAttribute.Command, controller.ControllerAttribute.MatchMethod))
-                {
-                    continue;
-                }
-
-                if (controller.FriendImageHandlers.Any())
-                {
-                    foreach (var method in controller.FriendImageHandlers)
-                    {
-                        using var scope = this.serviceProvider.CreateScope();
-                        var controllerObj = GetController(controller.ControllerType, scope);
-                        method.Invoke(controllerObj, new object[] { msg });
-                    }
-
-                    break;
-                }
-            }
+            OnPictureMsgRecieved(msg);
         }
 
         /// <inheritdoc/>
         public void OnFriendTextMsgRecieved(TextMessage msg)
         {
-            foreach (var controller in this.controllers.ResolvedControllers)
-            {
-                if (!CheckMatch(msg.Content, controller.ControllerAttribute.Command, controller.ControllerAttribute.MatchMethod))
-                {
-                    continue;
-                }
-
-                if (controller.FriendTextHandlers.Any())
-                {
-                    foreach (var method in controller.FriendTextHandlers)
-                    {
-                        using var scope = this.serviceProvider.CreateScope();
-                        var controllerObj = GetController(controller.ControllerType, scope);
-                        method.Invoke(controllerObj, new object[] { msg });
-                    }
-
-                    break;
-                }
-            }
+            OnTextMsgRecieved(msg);
         }
 
         /// <inheritdoc/>
         public void OnGroupPictureMsgRecieved(PictureMessage msg)
         {
-            foreach (var controller in this.controllers.ResolvedControllers)
-            {
-                if (!CheckMatch(msg.Content, controller.ControllerAttribute.Command, controller.ControllerAttribute.MatchMethod))
-                {
-                    continue;
-                }
-
-                if (controller.GroupImageHandlers.Any())
-                {
-                    foreach (var method in controller.GroupImageHandlers)
-                    {
-                        using var scope = this.serviceProvider.CreateScope();
-                        var controllerObj = GetController(controller.ControllerType, scope);
-                        method.Invoke(controllerObj, new object[] { msg });
-                    }
-
-                    break;
-                }
-            }
+            OnPictureMsgRecieved(msg);
         }
 
         /// <inheritdoc/>
         public void OnGroupTextMsgRecieved(TextMessage msg)
         {
-            foreach (var controller in this.controllers.ResolvedControllers)
+            OnTextMsgRecieved(msg);
+        }
+
+        /// <summary>
+        /// 文本消息处理
+        /// </summary>
+        /// <param name="msg">文本消息</param>
+        /// <exception cref="NullReferenceException"></exception>
+        public void OnTextMsgRecieved(TextMessage msg)
+        {
+            foreach (var controller in controllers.ResolvedControllers)
             {
-                if (!CheckMatch(msg.Content, controller.ControllerAttribute.Command, controller.ControllerAttribute.MatchMethod))
+                if (!controller.TryGetHandlers(msg.MessageType, msg.SenderInfo.SenderType, out var methods))
                 {
                     continue;
                 }
-
-                if (controller.GroupTextHandlers.Any())
+                if (!controller.YukinoRouteAttribute.CheckLength(msg.Content))
                 {
-                    foreach (var method in controller.GroupTextHandlers)
-                    {
-                        using var scope = this.serviceProvider.CreateScope();
-                        var controllerObj = GetController(controller.ControllerType, scope);
-                        method.Invoke(controllerObj, new object[] { msg });
-                    }
-
+                    continue;
+                }
+                if (!controller.YukinoRouteAttribute.TryMatch(msg.Content, out var matchPairs))
+                {
+                    continue;
+                }
+                BotControllerBase controllerObj = controllers.GetController(controller.ControllerType)
+                    ?? throw new NullReferenceException();
+                controllerObj.MatchPairs = matchPairs;
+                controllerObj.Message = msg;
+                if (InvokeMethod(controllerObj, methods)
+                    && controller.YukinoRouteAttribute.Mode == HandleMode.Break)
+                {
                     break;
                 }
             }
         }
 
-        private static bool CheckMatch(string msg, string cmd, CommandMatchMethod method) => method switch
+        public void OnPictureMsgRecieved(PictureMessage msg)
         {
-            CommandMatchMethod.Strict => msg == cmd,
-            CommandMatchMethod.StartWith => msg.StartsWith(cmd),
-            CommandMatchMethod.Regex => Regex.IsMatch(msg, cmd),
-            _ => false
-        };
-
-        private static BotControllerBase GetController(Type controllerType, IServiceScope scope)
-        {
-            if (scope.ServiceProvider.GetService(controllerType) is not BotControllerBase controllerObj)
+            foreach (var controller in controllers.ResolvedControllers)
             {
-                throw new InvalidOperationException("controller is not resolved.");
+                if (!controller.TryGetHandlers(msg.MessageType, msg.SenderInfo.SenderType, out var methods))
+                {
+                    continue;
+                }
+                if (!controller.YukinoRouteAttribute.CheckLength(msg.Content))
+                {
+                    continue;
+                }
+                if (!controller.YukinoRouteAttribute.TryMatch(msg.Content, out var matchPairs))
+                {
+                    continue;
+                }
+                BotControllerBase controllerObj = controllers.GetController(controller.ControllerType)
+                    ?? throw new NullReferenceException();
+                controllerObj.MatchPairs = matchPairs;
+                controllerObj.Message = msg;
+                if (InvokeMethod(controllerObj, methods)
+                    && controller.YukinoRouteAttribute.Mode == HandleMode.Break)
+                {
+                    break;
+                }
+            }
+        }
+
+        private bool InvokeMethod(BotControllerBase controllerObj, List<MethodInfo> methods)
+        {
+            foreach (var method in methods)
+            {
+                object?[] paramsIn = ValidMethod(controllerObj, method);
+                if (controllerObj.IsValid)
+                {
+                    method.Invoke(controllerObj, paramsIn);
+                }
+                else
+                {
+                    controllerObj.EmitErrorMsg();
+                }
+            }
+            return true;
+        }
+
+        private object?[] ValidMethod(BotControllerBase controllerObj, MethodInfo method)
+        {
+            var @params = method.GetParameters();
+            var paramsIn = new object?[@params.Length];
+            for (int i = 0; i < @params.Length; i++)
+            {
+                var name = @params[i].Name ?? throw new ArgumentNullException("name can't be null");
+                if (controllerObj.MatchPairs.TryGetValue(name, out var value))
+                {
+                    if (TryValidParam(value, @params[i], out var errorInfo))
+                    {
+                        paramsIn[i] = Convert.ChangeType(value, @params[i].ParameterType);
+                        continue;
+                    }
+                    else
+                    {
+                        if (errorInfo != null)
+                        {
+                            controllerObj.ParamErrors.Add(errorInfo);
+                        }
+                        controllerObj.IsValid = false;
+                    }
+                }
+                else
+                {
+                    paramsIn[i] = @params[i].DefaultValue
+                        ?? throw new ArgumentException($"can't get the value of key:{name} from the regex groups, and the parameter doesn't have a default value, please check your regex.");
+                }
             }
 
-            return controllerObj;
+            return paramsIn;
+        }
+
+        private bool TryValidParam(string value, ParameterInfo info, out string? errorInfo)
+        {
+            var attrs = info.GetCustomAttributes<ValidationAttribute>();
+            foreach (var attr in attrs)
+            {
+                if (!attr.IsValid(value))
+                {
+                    errorInfo = attr.ErrorMessage;
+                    return false;
+                }
+            }
+            errorInfo = null;
+            return true;
         }
     }
 }

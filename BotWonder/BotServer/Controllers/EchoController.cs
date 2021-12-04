@@ -11,13 +11,14 @@ namespace BotWonder.BotServer.Controllers
     /// <summary>
     /// 复读控制器
     /// </summary>
-    [YukinoshitaController(Command = "echo", MatchMethod = CommandMatchMethod.StartWith, Mode = HandleMode.Break, Priority = 0)]
+    [StrictRoute(Command = "echo", Priority = 0)]
     public class EchoController : BotControllerBase
     {
         [FriendText, GroupText]
-        public Task CommonHandler(TextMessage message)
+        public Task CommonHandler()
         {
-            message.ReplyTextMsg(message.Content[5..]);
+            var msg = Message as TextMessage;
+            msg.ReplyTextMsg(msg.Content[5..]);
             return Task.CompletedTask;
         }
     }

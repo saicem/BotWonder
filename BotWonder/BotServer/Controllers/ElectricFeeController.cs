@@ -12,7 +12,7 @@ namespace BotWonder.BotServer.Controllers
     /// <summary>
     /// 电费查询
     /// </summary>
-    [YukinoshitaController(Command = "电费", MatchMethod = CommandMatchMethod.StartWith, Mode = HandleMode.Break, Priority = 6)]
+    [StartRoute(Command = "电费", Priority = 6)]
     public class ElectricFeeController : BotControllerBase
     {
         /// <summary>
@@ -41,23 +41,24 @@ namespace BotWonder.BotServer.Controllers
         /// </summary>
         /// <param name="message"></param>
         [FriendText, GroupText]
-        public async Task CommonFunc(TextMessage message)
+        public async Task CommonFunc()
         {
+            var msg = Message as TextMessage;
             if ((DateTime.Now.Hour == 23 && DateTime.Now.Minute >= 20) || (DateTime.Now.Hour == 0 && DateTime.Now.Minute <= 10))
             {
-                message.ReplyTextMsg("缴费系统正在维护\n请在 23:20~00:10 之外进行查询");
+                msg.ReplyTextMsg("缴费系统正在维护\n请在 23:20~00:10 之外进行查询");
                 return;
             }
-            var sender_qq = message.SenderInfo.FromQQ;
+            var sender_qq = msg.SenderInfo.FromQQ;
             var user = await db.GetUser((long)sender_qq);
             if (user == null)
             {
-                message.ReplyTextMsg("需要绑定学号及宿舍");
+                msg.ReplyTextMsg("需要绑定学号及宿舍");
                 return;
             }
             if (!user.IsBindRoom())
             {
-                message.ReplyTextMsg("需要先绑定宿舍:\n" +
+                msg.ReplyTextMsg("需要先绑定宿舍:\n" +
                     "绑定宿舍 (东1-101|西2-201|狮城公寓-302|慧1-103|越1-435|智4-409|北5-505|学海6-724)");
                 return;
             }
@@ -65,15 +66,15 @@ namespace BotWonder.BotServer.Controllers
             var res = await web.QueryEletricFee(user.Username, user.Password, stuRoom.MeterId, stuRoom.Region);
             if (res == null)
             {
-                message.ReplyTextMsg("服务器错误");
+                msg.ReplyTextMsg("服务器错误");
                 return;
             }
             if (res.Ok == false)
             {
-                message.ReplyTextMsg("绑定信息错误，查询失败！");
+                msg.ReplyTextMsg("绑定信息错误，查询失败！");
                 return;
             }
-            message.ReplyTextMsg(res.Data?.ToString());
+            msg.ReplyTextMsg(res.Data?.ToString());
         }
     }
 }

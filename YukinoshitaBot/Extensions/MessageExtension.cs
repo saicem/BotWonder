@@ -1,13 +1,9 @@
-﻿namespace YukinoshitaBot.Extensions
-{
-    using System;
-    using System.Collections.Generic;
-    using System.Linq;
-    using System.Text;
-    using System.Threading.Tasks;
-    using YukinoshitaBot.Data.Event;
-    using YukinoshitaBot.Data.OpqApi;
+﻿using System;
+using YukinoshitaBot.Data.Event;
+using YukinoshitaBot.Data.OpqApi;
 
+namespace YukinoshitaBot.Extensions
+{
     /// <summary>
     /// <see cref="Message"/>的扩展
     /// </summary>

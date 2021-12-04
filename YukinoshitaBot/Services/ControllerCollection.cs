@@ -4,13 +4,11 @@
 
 namespace YukinoshitaBot.Services
 {
+    using Microsoft.Extensions.DependencyInjection;
     using System;
     using System.Collections.Generic;
-    using System.Linq;
-    using System.Reflection;
-    using System.Text;
-    using System.Threading.Tasks;
     using YukinoshitaBot.Data.Attributes;
+    using YukinoshitaBot.Data.Controller;
 
     /// <summary>
     /// 控制器容器
@@ -20,21 +18,17 @@ namespace YukinoshitaBot.Services
         /// <summary>
         /// Initializes a new instance of the <see cref="ControllerCollection"/> class.
         /// </summary>
-        public ControllerCollection()
+        public ControllerCollection(IServiceProvider serviceProvider)
         {
+            this.scope = serviceProvider.CreateScope();
             this.ResolvedControllers = new SortedSet<YukinoshitaControllerInfo>();
-            //this.Handlers = new Dictionary<Type, HashSet<YukinoshitaHandlerInfo>>();
         }
 
         /// <summary>
         /// 已解析的控制器
         /// </summary>
         public SortedSet<YukinoshitaControllerInfo> ResolvedControllers { get; init; }
-
-        ///// <summary>
-        ///// 已解析的Handler
-        ///// </summary>
-        //public Dictionary<Type, HashSet<YukinoshitaHandlerInfo>> Handlers { get; }
+        private IServiceScope scope { get; set; }
 
 
         /// <summary>
@@ -44,21 +38,16 @@ namespace YukinoshitaBot.Services
         public void AddController(Type controllerType)
         {
             this.ResolvedControllers.Add(new YukinoshitaControllerInfo(controllerType));
+        }
 
-            // 对每一个控制器类型，获取其方法
-            //var allMethods = controllerType.GetMethods();
-            //var handlers = new HashSet<YukinoshitaHandlerInfo>();
+        public BotControllerBase GetController(Type controllerType)
+        {
+            if (this.scope.ServiceProvider.GetService(controllerType) is not BotControllerBase controllerObj)
+            {
+                throw new InvalidOperationException("controller is not resolved.");
+            }
 
-            //foreach (var method in allMethods)
-            //{
-            //    // 筛选含有YukinoshitaHandlerAttribute的方法
-            //    if (method.GetCustomAttribute<FriendTextAttribute>() is FriendTextAttribute)
-            //    {
-            //        handlers.Add(new YukinoshitaHandlerInfo(method));
-            //    }
-            //}
-
-            //this.Handlers.Add(controllerType, handlers);
+            return controllerObj;
         }
     }
 }
