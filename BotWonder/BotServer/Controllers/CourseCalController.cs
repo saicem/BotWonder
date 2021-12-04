@@ -30,28 +30,32 @@ namespace BotWonder.BotServer.Controllers
             this.web = web;
         }
 
+        /// <summary>
+        /// 文本消息处理
+        /// </summary>
+        /// <returns></returns>
         [FriendText, GroupText]
-        private async Task CommonFunc()
+        private async Task TextMsgHandler()
         {
             var senderQq = Message.SenderInfo.FromQQ;
             var user = await db.GetUser((long)senderQq);
             if (user == null)
             {
-                Message.ReplyTextMsg($"请私聊机器人进行绑定，格式:\n{HelpContent.BindStuCommand}");
+                Message.ReplyText($"请私聊机器人进行绑定，格式:\n{HelpContent.BindStuCommand}");
                 return;
             }
             var res = await web.QueryCourseCal(user);
             if (res == null)
             {
-                Message.ReplyTextMsg("服务器错误,等待修复");
+                Message.ReplyText("服务器错误,等待修复");
                 return;
             }
             if (!res.Ok)
             {
-                Message.ReplyTextMsg("查询失败，检查账号密码正确性");
+                Message.ReplyText("查询失败，检查账号密码正确性");
                 return;
             }
-            Message.ReplyTextMsg(TextFormat(res.Data));
+            Message.ReplyText(TextFormat(res.Data));
         }
 
         private static string TextFormat(object url)

@@ -27,15 +27,19 @@ namespace BotWonder.BotServer.Controllers
             this.web = web;
         }
 
+        /// <summary>
+        /// 文本消息处理
+        /// </summary>
+        /// <returns></returns>
         [FriendText, GroupText]
-        public async Task CommonFunc()
+        public async Task TextMsgHandler()
         {
             var msg = Message as TextMessage;
             var senderQq = msg.SenderInfo.FromQQ;
             var user = await db.GetUser((long)senderQq);
             if (user == null)
             {
-                msg.ReplyTextMsg($"请私聊机器人进行绑定\n{HelpContent.BindStuCommand}");
+                msg.ReplyText($"请私聊机器人进行绑定\n{HelpContent.BindStuCommand}");
                 return;
             }
             var match = Regex.Match(msg.Content, "^课表\\s*(\\d+)$");
@@ -45,7 +49,7 @@ namespace BotWonder.BotServer.Controllers
                 weekOrder = int.Parse(match.Groups[1].Value);
                 if (weekOrder >= 20 || weekOrder <= 0)
                 {
-                    msg.ReplyTextMsg("参数应在 1~20");
+                    msg.ReplyText("参数应在 1~20");
                     return;
                 }
             }
@@ -61,12 +65,12 @@ namespace BotWonder.BotServer.Controllers
             var res = await web.QueryCoursePic(user, weekOrder);
             if (res == null)
             {
-                msg.ReplyTextMsg("服务器错误,等待修复");
+                msg.ReplyText("服务器错误,等待修复");
                 return;
             }
             if (!res.Ok)
             {
-                msg.ReplyTextMsg("查询失败，检查账号密码正确性");
+                msg.ReplyText("查询失败，检查账号密码正确性");
                 return;
             }
             var link = $"http://api.saicem.top{res.Data}";

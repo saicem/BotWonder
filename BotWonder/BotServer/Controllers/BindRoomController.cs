@@ -5,7 +5,6 @@ using System.Threading.Tasks;
 using YukinoshitaBot.Data.Attributes;
 using YukinoshitaBot.Data.Controller;
 using YukinoshitaBot.Data.Event;
-using YukinoshitaBot.Extensions;
 
 namespace BotWonder.BotServer.Controllers
 {
@@ -26,28 +25,30 @@ namespace BotWonder.BotServer.Controllers
             this.db = db;
         }
 
+        /// <summary>
+        /// 文本消息处理
+        /// </summary>
+        /// <returns></returns>
         [FriendText, GroupText]
-        private async Task CommonFunc()
+        private async Task TextMsgHandler()
         {
             var textMessage = Message as TextMessage;
-            var senderQq = textMessage.SenderInfo.FromQQ;
             // TODO 优化，好像只需要qq号
-            var user = await db.GetUser((long)senderQq);
+            var user = await db.GetUser((long)FromQQ);
             if (user == null)
             {
-                textMessage.ReplyTextMsg($"请先私聊机器人绑定学号\n格式:\n{HelpContent.BindStuCommand}");
+                ReplyTextMsg($"请先私聊机器人绑定学号\n格式:\n{HelpContent.BindStuCommand}");
                 return;
             }
             var match = Regex.Match(textMessage.Content, "绑定宿舍\\s*(.{6,10})$");
             if (!match.Success)
             {
-                textMessage.ReplyTextMsg("绑定宿舍格式:\n" +
-                $"{HelpContent.BindRoomCommand}");
+                ReplyTextMsg($"绑定宿舍格式:\n{HelpContent.BindRoomCommand}");
                 return;
             }
             var roomName = match.Groups[1].Value;
-            var retMsg = await db.BindRoomDb((long)senderQq, roomName);
-            textMessage.ReplyTextMsg(retMsg);
+            var retMsg = await db.BindRoomDb((long)FromQQ, roomName);
+            ReplyTextMsg(retMsg);
         }
     }
 }

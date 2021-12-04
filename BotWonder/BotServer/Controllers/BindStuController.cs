@@ -1,6 +1,7 @@
 ﻿using BotWonder.DAO;
 using BotWonder.Data;
 using BotWonder.Services;
+using System.ComponentModel.DataAnnotations;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using YukinoshitaBot.Data.Attributes;
@@ -27,27 +28,23 @@ namespace BotWonder.BotServer.Controllers
             this.db = db;
         }
 
-        [FriendText]
-        public async Task FriendTextMsgHandler(string username, string password)
+        /// <summary>
+        /// 返回匹配失败的提示信息
+        /// </summary>
+        public override void OnValidationError()
         {
-            //var match = Regex.Match(Message.Content, "绑定\\s+(\\d+?)\\s+(.+)");
+            ReplyTextMsg($"绑定失败 格式错误\n参考格式如下:\n{HelpContent.BindStuCommand}");
+        }
 
-            //if (match.Success)
-            //{
-            //    // TODO 账号有效性验证
-            //    await db.BindStuDb(new User
-            //    {
-            //        Qq = (long)Message.SenderInfo.FromQQ,
-            //        Username = match.Groups[1].Value,
-            //        Password = match.Groups[2].Value,
-            //    });
-            //    Message.ReplyTextMsg("绑定成功");
-            //}
-            //else
-            //{
-            //    Message.ReplyTextMsg($"绑定失败 格式错误\n参考格式如下:\n{HelpContent.BindStuCommand}");
-            //}
-
+        /// <summary>
+        /// 好友消息处理
+        /// </summary>
+        /// <param name="username">教务处用户名</param>
+        /// <param name="password">教务处密码</param>
+        /// <returns></returns>
+        [FriendText]
+        public async Task FriendTextMsgHandler([RegularExpression(@"\d{13}")] string username, string password)
+        {
             // TODO 账号有效性验证
             await db.BindStuDb(new User
             {
@@ -55,13 +52,17 @@ namespace BotWonder.BotServer.Controllers
                 Username = username,
                 Password = password,
             });
-            Message.ReplyTextMsg("绑定成功");
+            Message.ReplyText("绑定成功");
         }
 
+        /// <summary>
+        /// 群消息处理
+        /// </summary>
+        /// <returns></returns>
         [GroupText]
-        public Task GroupTextMsgHandler(TextMessage message)
+        public Task GroupTextMsgHandler()
         {
-            message.ReplyTextMsg("请私聊机器人进行绑定");
+            ReplyTextMsg("请私聊机器人进行绑定");
             return Task.CompletedTask;
         }
     }

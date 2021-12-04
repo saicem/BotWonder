@@ -15,10 +15,10 @@ namespace BotWonder.BotServer.Controllers
     public class EchoController : BotControllerBase
     {
         [FriendText, GroupText]
-        public Task CommonHandler()
+        public Task TextMsgHandler()
         {
             var msg = Message as TextMessage;
-            msg.ReplyTextMsg(msg.Content[5..]);
+            msg.ReplyText(msg.Content[5..]);
             return Task.CompletedTask;
         }
     }
