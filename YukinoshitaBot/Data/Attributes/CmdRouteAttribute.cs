@@ -24,8 +24,6 @@ namespace YukinoshitaBot.Data.Attributes
             this.Command = cmd;
         }
 
-        public bool AllowRedundancy { get; set; } = true;
-
         public override bool TryMatch(string msg, out Dictionary<string, string> matchPairs)
         {
             var regex = this.CompileCommand();
@@ -95,10 +93,7 @@ namespace YukinoshitaBot.Data.Attributes
             {
                 sb.Append(unit.Content);
             }
-            if (!this.AllowRedundancy)
-            {
-                sb.Append('$');
-            }
+            sb.Append('$');
             return new Regex(sb.ToString());
         }
 
@@ -143,13 +138,13 @@ namespace YukinoshitaBot.Data.Attributes
                 // TODO 还没写
             }
 
-            var option = match.Groups["option"]?.Value;
+            var option = match.Groups["option"];
             if (option != null)
             {
                 return new CmdUnit
                 {
                     Type = CmdType.Option,
-                    Content = @$"\s*(?<{key}>\S*)",
+                    Content = @$"(?:\s+(?<{key}>\S+))?",
                 };
             }
             else
