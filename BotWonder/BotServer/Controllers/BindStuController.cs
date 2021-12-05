@@ -14,7 +14,7 @@ namespace BotWonder.BotServer.Controllers
     /// <summary>
     /// 绑定学号 以能够进行基本的功能
     /// </summary>
-    [CmdRoute(Command = "绑定_{username}_{password}", Priority = 4)]
+    [CmdRoute(Command = "绑定{username}{password}", Priority = 4)]
     public class BindStuController : BotControllerBase
     {
         private readonly DbHandler db;
@@ -33,7 +33,7 @@ namespace BotWonder.BotServer.Controllers
         /// </summary>
         public override void OnValidationError()
         {
-            ReplyTextMsg($"绑定失败 格式错误\n参考格式如下:\n{HelpContent.BindStuCommand}");
+            ReplyTextMsg($"绑定失败:\n{string.Join('\n',ParamErrors)}\n参考格式如下:\n{HelpContent.BindStuCommand}");
         }
 
         /// <summary>
@@ -43,7 +43,7 @@ namespace BotWonder.BotServer.Controllers
         /// <param name="password">教务处密码</param>
         /// <returns></returns>
         [FriendText]
-        public async Task FriendTextMsgHandler([RegularExpression(@"\d{13}")] string username, string password)
+        public async Task FriendTextMsgHandler([RegularExpression(@"\d{13}", ErrorMessage = "错误的学号")] string username, string password)
         {
             // TODO 账号有效性验证
             await db.BindStuDb(new User

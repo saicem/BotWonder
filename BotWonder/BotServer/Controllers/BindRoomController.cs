@@ -12,7 +12,7 @@ namespace BotWonder.BotServer.Controllers
     /// <summary>
     /// 绑定宿舍
     /// </summary>
-    [CmdRoute(Command = "绑定宿舍_{room}", Priority = 1)]
+    [CmdRoute(Command = "绑定宿舍{room}", Priority = 1)]
     public class BindRoomController : BotControllerBase
     {
         private DbHandler db;

@@ -6,10 +6,25 @@
     <members>
         <member name="T:YukinoshitaBot.Data.Attributes.CmdRouteAttribute">
             <summary>
-            [CmdRoute("测试_{must}_[option]")] <br/>
-            _      ->  \s* <br/>
-            {key}  ->  (?&lt;key&gt;.+?) <br/>
-            [key]  ->  (?&lt;key&gt;.*?)
+            [CmdRoute("测试{requsite}{option?}{key:append}")] <br/>
+            {key}  ->  (?&lt;key&gt;.+?)
+            </summary>
+        </member>
+        <member name="M:YukinoshitaBot.Data.Attributes.CmdRouteAttribute.BuildCmdRegex(System.Collections.Generic.Queue{YukinoshitaBot.Data.Attributes.CmdRouteAttribute.CmdUnit})">
+            <summary>
+            构建用于命令匹配的正则表达式
+            </summary>
+            <param name="queue">命令单元列表</param>
+            <returns></returns>
+        </member>
+        <member name="T:YukinoshitaBot.Data.Attributes.CmdRouteAttribute.CmdUnit">
+            <summary>
+            命令单元
+            </summary>
+        </member>
+        <member name="T:YukinoshitaBot.Data.Attributes.CmdRouteAttribute.CmdType">
+            <summary>
+            命令单元类型
             </summary>
         </member>
         <member name="T:YukinoshitaBot.Data.Attributes.HandleMode">

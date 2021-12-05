@@ -15,7 +15,7 @@ namespace BotWonder.BotServer.Controllers
     /// <summary>
     /// 生成课表图片
     /// </summary>
-    [CmdRoute(Command = "课表_[week]", Priority = 3)]
+    [CmdRoute(Command = "课表{week?}", Priority = 3)]
     public class CoursePicController : BotControllerBase
     {
         public DbHandler db;
